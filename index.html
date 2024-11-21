@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tìm điểm sửa xe gần nhất</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+        #search-container {
+            margin: 20px auto;
+            text-align: center;
+        }
+        #search-bar {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        #search-bar:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        #search-results {
+            margin-top: 10px;
+            text-align: left;
+        }
+        .result-item {
+            margin: 5px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .result-item:hover {
+            background-color: #e9e9e9;
+        }
+        .shop {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px; /* Giảm khoảng cách giữa các cửa hàng */
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            flex: 1 1 300px; /* Cho phép các cửa hàng co giãn */
+            max-width: 300px; /* Đặt chiều rộng tối đa cho mỗi cửa hàng */
+            cursor: pointer;
+        }
+        .shop:hover {
+            transform: scale(1.02);
+        }
+        .shop h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #333;
+        }
+        .shop p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .cont {
+            display: flex;
+            flex-wrap: wrap; /* Cho phép các cửa hàng xuống dòng khi không còn đủ chỗ */
+            justify-content: flex-start; /* Căn chỉnh các cửa hàng về bên trái */
+        }
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #map {
+            height: 400px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css">
+    <!-- Thư viện Leaflet Routing Machine -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+
+</head>
+<body>
+    <h1>Tìm điểm sửa xe gần nhất</h1>
+    <div id="map"></div>
+    <div class="button-container">
+        <button onclick="locateUser ()">Tìm vị trí của tôi và điểm sửa xe gần nhất</button>
+    </div>
+
+    <div id="search-container">
+        <h1>Tìm kiếm theo Đường, Phường, Quận</h1>
+        <input type="text" id="search-bar" placeholder="Nhập tên đường/phường/quận...">
+        <div id="search-results"></div>
+    </div>
+
+    <h2>Phường Bắc Từ Liêm</h2>
+    <div class="cont">
+    <div class="shop" onclick="window.location.href='detail.html?id=3'">
+        <h2>Gara Bình An</h2>
+        <p><strong>Loại:</strong> Ô tô</p>
+        <p><strong>Quận:</strong> Bắc Từ Liêm</p>
+        <p><strong>Phường:</strong> Xuân Đỉnh</p>
+        <p><strong>Đường:</strong> Phạm Văn Đồng</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7445.854550672153!2d105.77577844262123!3d21.075566650472744!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ab4b5415d4f1%3A0x6c9c694e4c0a60a2!2sGara%20B%C3%ACnh%20An!5e0!3m2!1svi!2s!4v1731052224855!5m2!1svi!2s" allowfullscreen></iframe>
+    </div>
+    
+    <div class="shop" onclick="window.location.href='detail.html?id=4'">
+        <h2>Gara Tuấn Hoàng</h2>
+        <p><strong>Loại:</strong> Ô tô</p>
+        <p><strong>Quận:</strong> Bắc Từ Liêm</p>
+        <p><strong>Phường:</strong> Đông Ngạc</p>
+        <p><strong>Đường:</strong> Thụy Phương</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29781.3844773958!2d105.75429226574161!3d21.085716360367257!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x313455e8d7ec6667%3A0x567611f4df0321e2!2zR0FSQSBUdeG6pW4gSG_DoG5n!5e0!3m2!1svi!2s!4v1731058720079!5m2!1svi!2s" allowfullscreen></iframe>
+    </div>
+    
+    <div class="shop" onclick="window.location.href='detail.html?id=1'">
+        <h2>Thái Honda motor 3</h2>
+        <p><strong>Loại:</strong> Xe Máy</p>
+        <p><strong>Quận:</strong> Bắc Từ Liêm</p>
+        <p><strong>Phường:</strong> Cổ Nhuế</p>
+        <p><strong>Đường:</strong> Phố Viên</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d14892.14739168745!2d105.76122343540197!3d21.071190461392327!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3134551e6d3ebc31%3A0xde0f4c49f360e94d!2zVGnhu4dtIHPhu61hIHhlIFRow6FpIEhvbmRhIG1vdG9yIDM!5e0!3m2!1svi!2s!4v1732171889374!5m2!1svi!2s" allowfullscreen></iframe>
+    </div>
+    
+    <div class="shop" onclick="window.location.href='detail.html?id=6'">
+        <h2>Gara Trường Phát</h2>
+        <p><strong>Loại:</strong> Ô tô</p>
+        <p><strong>Quận:</strong> Bắc Từ Liêm</p>
+        <p><strong>Phường:</strong> Đông Ngạc</p>
+        <p><strong>Đường:</strong> Cầu Thăng Long</p>
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29782.443688467527!2d105.75309063610291!3d21.080430739222365!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135abf51e7c4e1d%3A0x5dc5f94dd4251697!2zR2FyYWdlIMOUIFTDtCBUaGFuaCBZ!5e0!3m2!1svi!2s!4v1731061030976!5m2!1svi!2s" allowfullscreen></iframe>
+    </div>
+        
+
+
+</div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+ <script src="main.js"></script>
+    <script src="main2.js"></script>
+
+</body>
+</html>
