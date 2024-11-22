@@ -9,11 +9,16 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Mảng chứa các điểm sửa xe, bao gồm tên và tọa độ
 const repairPoints = [
-    { lat: 21.0475, lng: 105.7839, name: "Tiệm sửa xe A" },
-    { lat: 21.0374, lng: 105.7980, name: "Tiệm sửa xe B" },
-    { lat: 21.0354, lng: 105.7829, name: "Tiệm sửa xe C" },
-    { lat: 21.0715, lng: 105.7770, name: "Tiệm sửa xe D" },
-    { lat: 21.0604, lng: 105.7852, name: "Tiệm sửa xe E" }
+    { lat: 21.07557985160602, lng: 105.7990637448593, name: "Gara Quang Tiến" },
+    { lat: 21.07638074149691, lng: 105.78515917360109, name: "Gara Bình An" },
+    { lat: 21.08983504646173, lng: 105.7855024963482, name: "Gara Trường Phát" },
+    { lat: 21.058039281279854, lng: 105.78181177680995, name: "Gara Tâm Bình" },
+    { lat: 21.070053593668707, lng: 105.78842073969193, name: "Gara An Lộc" },
+    { lat: 21.071751101322032, lng: 105.7724682122385, name: "Thái Honda Motor" },
+    { lat: 21.066464983745284, lng: 105.77287590800069, name: "Nam Việt Motor" },
+    { lat: 21.069428436436542, lng: 105.77826178359608, name: "Vinh Motor" },
+    { lat: 21.08088445860299, lng: 105.78481809623858, name: "Phương Motor" },
+    { lat: 21.084237946949344, lng: 105.77169057722894, name: "Anh Trọng Motor" }
 ];
 
 // Hàm tính khoảng cách giữa hai điểm
