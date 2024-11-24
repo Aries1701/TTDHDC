@@ -54,18 +54,18 @@ async function getAddressFromCoordinates(lat, lng) {
 }
 
 // Hàm để định vị và tìm các điểm sửa xe gần nhất trong bán kính 2km
-async function locateUser() {
+async function locateUser () {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(async position => {
             const userLat = position.coords.latitude;
             const userLng = position.coords.longitude;
 
             // Đánh dấu vị trí người dùng
-            const userMarker = L.marker([userLat, userLng]).addTo(map)
+ const userMarker = L.marker([userLat, userLng]).addTo(map)
                 .bindPopup("Vị trí của bạn")
                 .openPopup();
 
-            // Tìm các điểm sửa xe trong bán kính 2km
+            // Tìm các điểm sửa xe trong bán kính 10km
             const nearbyRepairPoints = findRepairPointsWithinRadius(userLat, userLng, 10000);
 
             // Kiểm tra và hiển thị các điểm sửa xe gần nhất
@@ -76,16 +76,82 @@ async function locateUser() {
 
                     // Đánh dấu từng điểm sửa xe với địa chỉ từ OpenStreetMap
                     L.marker([point.lat, point.lng]).addTo(map)
-                        .bindPopup(`<b>${point.name}</b><br>Địa chỉ: ${address}`);
+                        .bindPopup(`<b>${point.name}</b><br>Địa chỉ: ${address}<br><button onclick="getRoute(${userLat}, ${userLng}, ${point.lat}, ${point.lng})">Tìm đường</button>`);
                 });
 
                 // Phóng to để hiển thị cả vị trí người dùng và các điểm sửa xe gần nhất
                 map.setView([userLat, userLng], 14);
             } else {
-                alert("Không tìm thấy điểm sửa xe nào trong bán kính 2km.");
+                alert("Không tìm thấy điểm sửa xe nào trong bán kính 10km.");
             }
         });
     } else {
         alert("Trình duyệt của bạn không hỗ trợ định vị.");
     }
 }
+
+// Hàm lấy đường đi từ vị trí người dùng đến điểm sửa xe
+async function getRoute(userLat, userLng, repairLat, repairLng) {
+    const url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${repairLng},${repairLat}?overview=full&geometries=geojson&steps=true`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.routes && data.routes.length > 0) {
+            const route = data.routes[0].geometry.coordinates;
+            const latLngs = route.map(coord => [coord[1], coord[0]]); // Chuyển đổi sang định dạng [lat, lng]
+
+            // Vẽ đường đi trên bản đồ
+            L.polyline(latLngs, { color: 'blue' }).addTo(map);
+            map.fitBounds(latLngs); // Phóng to để hiển thị toàn bộ đường đi
+        } else {
+            alert("Không tìm thấy đường đi.");
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy đường đi:", error);
+        alert("Đã xảy ra lỗi khi tìm đường đi.");
+    }
+}
+
+let routeLine; // Biến để lưu trữ đường đi
+
+// Hàm lấy đường đi từ vị trí người dùng đến điểm sửa xe
+async function getRoute(userLat, userLng, repairLat, repairLng) {
+    const url = `https://router.project-osrm.org/route/v1/driving/${userLng},${userLat};${repairLng},${repairLat}?overview=full&geometries=geojson&steps=true`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.routes && data.routes.length > 0) {
+            const route = data.routes[0].geometry.coordinates;
+            const latLngs = route.map(coord => [coord[1], coord[0]]); // Chuyển đổi sang định dạng [lat, lng]
+
+            // Nếu đã có đường đi trước đó, xóa nó
+            if (routeLine) {
+                map.removeLayer(routeLine);
+            }
+
+            // Vẽ đường đi trên bản đồ
+            routeLine = L.polyline(latLngs, { color: 'blue' }).addTo(map);
+            map.fitBounds(latLngs); // Phóng to để hiển thị toàn bộ đường đi
+        } else {
+            alert("Không tìm thấy đường đi.");
+        }
+    } catch (error) {
+        console.error("Lỗi khi lấy đường đi:", error);
+        alert("Đã xảy ra lỗi khi tìm đường đi.");
+    }
+}
+
+// Hàm để xóa đường đi
+function clearRoute() {
+    if (routeLine) {
+        map.removeLayer(routeLine);
+        routeLine = null; // Đặt lại biến đường đi
+    }
+}
+
+// Gọi hàm locateUser () để xác định vị trí người dùng
+locateUser ();
